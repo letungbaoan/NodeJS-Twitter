@@ -1,5 +1,10 @@
+import { ifError } from 'assert'
+import { error } from 'console'
 import { config } from 'dotenv'
-import jwt from 'jsonwebtoken'
+import jwt, { Jwt, JwtPayload } from 'jsonwebtoken'
+import { reject } from 'lodash'
+import { resolve } from 'path'
+import { TokenPayLoad } from '~/models/request/User.requests'
 config()
 
 export const signToken = ({
@@ -19,6 +24,23 @@ export const signToken = ({
 				throw reject(error)
 			}
 			resolve(token as string)
+		})
+	})
+}
+
+export const verifyToken = ({
+	token,
+	secretOnPublicKey = process.env.JWT_SECRET as string
+}: {
+	token: string
+	secretOnPublicKey?: string
+}) => {
+	return new Promise<TokenPayLoad>((resolve, reject) => {
+		jwt.verify(token, secretOnPublicKey, (error, decoded) => {
+			if (error) {
+				throw reject(error)
+			}
+			resolve(decoded as TokenPayLoad)
 		})
 	})
 }
