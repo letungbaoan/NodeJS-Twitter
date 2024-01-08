@@ -1,4 +1,4 @@
-import { registerReqBody } from '~/models/request/User.requests'
+import { UpdateMeReqBody, registerReqBody } from '~/models/request/User.requests'
 import databaseService from './database.service'
 import User from '~/models/schemas/User.schema'
 import { hashPassword } from '~/utils/crypto'
@@ -9,6 +9,9 @@ import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { verify } from 'crypto'
+import { ErrorWithStatus } from '~/models/Errors'
+import HTTP_STATUS from '~/constants/httpStatus'
+import Follower from '~/models/schemas/Follower.schema'
 config()
 class UsersService {
 	private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -81,6 +84,7 @@ class UsersService {
 			new User({
 				...payload,
 				_id: user_id,
+				username: `user${user_id.toString()}`,
 				email_verify_token: email_verify_token,
 				date_of_birth: new Date(payload.date_of_birth),
 				password: hashPassword(payload.password)
@@ -211,6 +215,79 @@ class UsersService {
 				}
 			}
 		)
+	}
+
+	async updateMe(user_id: string, payload: UpdateMeReqBody) {
+		const _payload = payload.date_of_birth
+			? { ...payload, date_of_birth: new Date(payload.date_of_birth) }
+			: payload
+		const user = await databaseService.users.findOneAndUpdate(
+			{
+				_id: new ObjectId(user_id)
+			},
+			{
+				$set: {
+					...(_payload as UpdateMeReqBody & { date_of_birth: Date })
+				},
+				$currentDate: {
+					updated_at: true
+				}
+			},
+			{
+				returnDocument: 'after',
+				projection: {
+					password: 0,
+					forgot_password_token: 0,
+					email_verify_token: 0
+				}
+			}
+		)
+		return user
+	}
+
+	async getProfile(username: string) {
+		const user = await databaseService.users.findOne(
+			{ username: username },
+			{
+				projection: {
+					password: 0,
+					forgot_password_token: 0,
+					email_verify_token: 0,
+					verify: 0,
+					created_at: 0,
+					updated_at: 0
+				}
+			}
+		)
+		if (user === null) {
+			throw new ErrorWithStatus({
+				message: USERS_MESSAGES.USER_NOT_FOUND,
+				status: HTTP_STATUS.NOT_FOUND
+			})
+		}
+		return user
+	}
+
+	async follow(user_id: string, followed_user_id: string) {
+		const follower = await databaseService.followers.findOne({
+			user_id: new ObjectId(user_id),
+			followed_user_id: new ObjectId(followed_user_id)
+		})
+		if (follower) {
+			throw new ErrorWithStatus({
+				message: USERS_MESSAGES.ALREADY_FOLLOWED,
+				status: HTTP_STATUS.BAD_REQUEST
+			})
+		}
+		await databaseService.followers.insertOne(
+			new Follower({
+				user_id: new ObjectId(user_id),
+				followed_user_id: new ObjectId(followed_user_id)
+			})
+		)
+		return {
+			message: USERS_MESSAGES.FOLLOW_SUCCESS
+		}
 	}
 }
 

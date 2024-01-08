@@ -2,11 +2,13 @@ import { Router } from 'express'
 import {
 	accessTokenValidator,
 	emailVerifyTokenValidator,
+	followValidator,
 	forgotPasswordValidator,
 	loginValidator,
 	refreshTokenValidator,
 	registerValidator,
 	resetPasswordValidator,
+	updateMeValidator,
 	verifiedUserValidator,
 	verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
@@ -20,9 +22,13 @@ import {
 	verifyForgotPasswordTokenController,
 	resetPasswordController,
 	getMeController,
-	updateMeController
+	updateMeController,
+	getProfileController,
+	followController
 } from '~/controllers/users.controllers'
 import { wrapResquestHandler } from '~/utils/handlers'
+import { filterMiddleware } from '~/middlewares/common.middlewares'
+import { UpdateMeReqBody } from '~/models/request/User.requests'
 const usersRouter = Router()
 
 /**
@@ -99,6 +105,43 @@ usersRouter.get('/me', accessTokenValidator, wrapResquestHandler(getMeController
  * Header: { Authorization: Bearer <access_token>}
  * Body: UserSchema
  */
-usersRouter.patch('/me', accessTokenValidator, verifiedUserValidator, wrapResquestHandler(updateMeController))
+usersRouter.patch(
+	'/me',
+	accessTokenValidator,
+	verifiedUserValidator,
+	filterMiddleware<UpdateMeReqBody>([
+		'name',
+		'date_of_birth',
+		'bio',
+		'location',
+		'avatar',
+		'website',
+		'username',
+		'cover_photo'
+	]),
+	updateMeValidator,
+	wrapResquestHandler(updateMeController)
+)
+
+/**
+ * Path: /:username
+ * Method: GET
+ * Header: { access_token: string}
+ */
+usersRouter.get('/:username', wrapResquestHandler(getProfileController))
+
+/**
+ * Path: /follow
+ * Method: POST
+ * Header: { access_token: string}
+ * Body: { user_id: string}
+ */
+usersRouter.post(
+	'/follow',
+	accessTokenValidator,
+	verifiedUserValidator,
+	followValidator,
+	wrapResquestHandler(followController)
+)
 
 export default usersRouter

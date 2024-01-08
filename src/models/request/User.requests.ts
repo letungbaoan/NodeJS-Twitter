@@ -1,6 +1,19 @@
+import exp from 'constants'
 import { ExpressValidator } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
+
+export interface UpdateMeReqBody {
+	name?: string
+	date_of_birth?: string
+	bio?: string
+	location?: string
+	website?: string
+	username?: string
+	avatar?: string
+	cover_photo?: string
+}
 
 export interface registerReqBody {
 	name: string
@@ -45,4 +58,10 @@ export interface ResetPasswordReqBody {
 	confirm_password: string
 }
 
+export interface GetProfileReqParams {
+	username: string
+}
 
+export interface FollowReqBody {
+	followed_user_id: string
+}

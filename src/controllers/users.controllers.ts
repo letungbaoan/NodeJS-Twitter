@@ -3,12 +3,15 @@ import User from '~/models/schemas/User.schema'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersService from '~/services/users.services'
 import {
+	FollowReqBody,
 	ForgotPasswordReqBody,
+	GetProfileReqParams,
 	LoginReqBody,
 	LogoutReqBody,
 	RefreshTokenReqBody,
 	ResetPasswordReqBody,
 	TokenPayLoad,
+	UpdateMeReqBody,
 	VerifyEmailReqBody,
 	registerReqBody,
 	verifyForgotPasswordTokenReqBody
@@ -22,6 +25,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
 import { json } from 'stream/consumers'
 import { result } from 'lodash'
+import { pick } from 'lodash'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
 	const user = req.user as User
@@ -126,15 +130,32 @@ export const getMeController = async (req: Request, res: Response) => {
 	const user = await usersService.getMe(user_id)
 	return res.json({
 		message: USERS_MESSAGES.GET_ME_SUCCESS,
-		user
+		result: user
 	})
 }
 
-export const updateMeController = async (req: Request, res: Response) => {
-	//const { user_id } = req.decoded_authorization as TokenPayLoad
-	//const user = await usersService.getMe(user_id)
+export const updateMeController = async (req: Request<ParamsDictionary, any, UpdateMeReqBody>, res: Response) => {
+	const { user_id } = req.decoded_authorization as TokenPayLoad
+	const body = req.body
+	const user = await usersService.updateMe(user_id, body)
 	return res.json({
-		message: USERS_MESSAGES.UPDATE_ME_SUCCESS
-		//user
+		message: USERS_MESSAGES.UPDATE_ME_SUCCESS,
+		result: user
 	})
+}
+
+export const getProfileController = async (req: Request<GetProfileReqParams>, res: Response) => {
+	const { username } = req.params
+	const user = await usersService.getProfile(username)
+	return res.json({
+		message: USERS_MESSAGES.GET_PROFILE_SUCCESS,
+		result: user
+	})
+}
+
+export const followController = async (req: Request<ParamsDictionary, any, FollowReqBody>, res: Response) => {
+	const { user_id } = req.decoded_authorization as TokenPayLoad
+	const { followed_user_id } = req.body
+	const result = await usersService.follow(user_id, followed_user_id)
+	return res.json(result)
 }

@@ -16,6 +16,7 @@ import { capitalize } from 'lodash'
 import { TokenPayLoad } from '~/models/request/User.requests'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
+import { Http2ServerRequest } from 'http2'
 
 export const loginValidator = validate(
 	checkSchema(
@@ -531,3 +532,142 @@ export const verifiedUserValidator = (req: Request, res: Response, next: NextFun
 	}
 	next()
 }
+
+export const updateMeValidator = validate(
+	checkSchema(
+		{
+			name: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING
+				},
+				isLength: {
+					options: {
+						min: 5,
+						max: 50
+					},
+					errorMessage: USERS_MESSAGES.NAME_LENGTH_MUST_BE_FROM_5_TO_50
+				},
+				trim: true
+			},
+			date_of_birth: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_STRING
+				},
+				trim: true
+			},
+			bio: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.BIO_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 1,
+						max: 200
+					},
+					errorMessage: USERS_MESSAGES.BIO_LENGTH_MUST_BE_FROM_1_TO_200
+				}
+			},
+			location: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.LOCATION_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 1,
+						max: 200
+					},
+					errorMessage: USERS_MESSAGES.LOCATION_LENGTH_MUST_BE_FROM_1_TO_200
+				}
+			},
+			website: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.WEBSITE_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 1,
+						max: 200
+					},
+					errorMessage: USERS_MESSAGES.WEBSITE_LENGTH_MUST_BE_FROM_1_TO_200
+				}
+			},
+			username: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 5,
+						max: 50
+					},
+					errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_5_TO_50
+				}
+			},
+			avatar: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.AVATAR_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 1,
+						max: 200
+					},
+					errorMessage: USERS_MESSAGES.AVATAR_LENGTH_MUST_BE_FROM_1_TO_200
+				}
+			},
+			cover_photo: {
+				optional: true,
+				isString: {
+					errorMessage: USERS_MESSAGES.COVER_PHOTO_MUST_BE_STRING
+				},
+				trim: true,
+				isLength: {
+					options: {
+						min: 1,
+						max: 200
+					},
+					errorMessage: USERS_MESSAGES.COVER_PHOTO_LENGTH_MUST_BE_FROM_1_TO_200
+				}
+			}
+		},
+		['body']
+	)
+)
+
+export const followValidator = validate(
+	checkSchema({
+		followed_user_id: {
+			custom: {
+				options: async (value, { req }) => {
+					if (!ObjectId.isValid(value)) {
+						throw new ErrorWithStatus({
+							message: USERS_MESSAGES.USER_NOT_FOUND,
+							status: HTTP_STATUS.NOT_FOUND
+						})
+					}
+					const followed_used = await databaseService.users.findOne({
+						_id: new ObjectId(value)
+					})
+					if (followed_used === null) {
+						throw new ErrorWithStatus({
+							message: USERS_MESSAGES.USER_NOT_FOUND,
+							status: HTTP_STATUS.NOT_FOUND
+						})
+					}
+				}
+			}
+		}
+	})
+)
