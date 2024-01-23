@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import {
 	accessTokenValidator,
+	changePasswordValidator,
 	emailVerifyTokenValidator,
 	followValidator,
 	forgotPasswordValidator,
@@ -8,6 +9,7 @@ import {
 	refreshTokenValidator,
 	registerValidator,
 	resetPasswordValidator,
+	unfollowValidator,
 	updateMeValidator,
 	verifiedUserValidator,
 	verifyForgotPasswordTokenValidator
@@ -24,7 +26,9 @@ import {
 	getMeController,
 	updateMeController,
 	getProfileController,
-	followController
+	followController,
+	unfollowController,
+	changePasswordController
 } from '~/controllers/users.controllers'
 import { wrapResquestHandler } from '~/utils/handlers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
@@ -131,7 +135,7 @@ usersRouter.patch(
 usersRouter.get('/:username', wrapResquestHandler(getProfileController))
 
 /**
- * Path: /follow
+ * Path: /follow/user_id
  * Method: POST
  * Header: { access_token: string}
  * Body: { user_id: string}
@@ -142,6 +146,35 @@ usersRouter.post(
 	verifiedUserValidator,
 	followValidator,
 	wrapResquestHandler(followController)
+)
+
+/**
+ * Path: /:username
+ * Method: GET
+ * Header: { access_token: string}
+ */
+usersRouter.get('/:username', wrapResquestHandler(getProfileController))
+
+/**
+ * Path: /follow/:user_id
+ * Method: DELETE
+ * Header: { access_token: string}
+ * Body: { user_id: string}
+ */
+usersRouter.delete(
+	'/follow/:user_id',
+	accessTokenValidator,
+	verifiedUserValidator,
+	unfollowValidator,
+	wrapResquestHandler(unfollowController)
+)
+
+usersRouter.put(
+	'/change-password',
+	accessTokenValidator,
+	verifiedUserValidator,
+	changePasswordValidator,
+	wrapResquestHandler(changePasswordController)
 )
 
 export default usersRouter

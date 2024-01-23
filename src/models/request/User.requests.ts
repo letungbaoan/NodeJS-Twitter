@@ -3,7 +3,7 @@ import { ExpressValidator } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
-
+import { ParamsDictionary } from 'express-serve-static-core'
 export interface UpdateMeReqBody {
 	name?: string
 	date_of_birth?: string
@@ -64,4 +64,14 @@ export interface GetProfileReqParams {
 
 export interface FollowReqBody {
 	followed_user_id: string
+}
+
+export interface UnfollowReqParams extends ParamsDictionary {
+	user_id: string
+}
+
+export interface ChangePasswordReqBody {
+	oldPassword: string
+	password: string
+	confirmPassword: string
 }

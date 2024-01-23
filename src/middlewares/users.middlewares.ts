@@ -17,6 +17,7 @@ import { TokenPayLoad } from '~/models/request/User.requests'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import { Http2ServerRequest } from 'http2'
+import { REGEX_USERNAME } from '~/constants/regex'
 
 export const loginValidator = validate(
 	checkSchema(
@@ -600,17 +601,30 @@ export const updateMeValidator = validate(
 				}
 			},
 			username: {
-				optional: true,
+				notEmpty: {
+					errorMessage: USERS_MESSAGES.USERNAME_IS_REQUIRED
+				},
 				isString: {
 					errorMessage: USERS_MESSAGES.USERNAME_MUST_BE_STRING
 				},
-				trim: true,
 				isLength: {
 					options: {
-						min: 5,
-						max: 50
+						min: 4,
+						max: 15
 					},
-					errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_5_TO_50
+					errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_4_TO_15
+				},
+				trim: true,
+				custom: {
+					options: async (value: string, { req }) => {
+						if (!REGEX_USERNAME.test(value)) {
+							throw Error(USERS_MESSAGES.USERNAME_IS_INVALID)
+						}
+						const user = await databaseService.users.findOne({ username: value })
+						if (user) {
+							throw Error(USERS_MESSAGES.USERNAME_ALREADY_USED)
+						}
+					}
 				}
 			},
 			avatar: {
@@ -647,27 +661,162 @@ export const updateMeValidator = validate(
 )
 
 export const followValidator = validate(
-	checkSchema({
-		followed_user_id: {
-			custom: {
-				options: async (value, { req }) => {
-					if (!ObjectId.isValid(value)) {
-						throw new ErrorWithStatus({
-							message: USERS_MESSAGES.USER_NOT_FOUND,
-							status: HTTP_STATUS.NOT_FOUND
+	checkSchema(
+		{
+			followed_user_id: {
+				custom: {
+					options: async (value, { req }) => {
+						if (!ObjectId.isValid(value)) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.USER_NOT_FOUND,
+								status: HTTP_STATUS.NOT_FOUND
+							})
+						}
+						const followed_used = await databaseService.users.findOne({
+							_id: new ObjectId(value)
 						})
-					}
-					const followed_used = await databaseService.users.findOne({
-						_id: new ObjectId(value)
-					})
-					if (followed_used === null) {
-						throw new ErrorWithStatus({
-							message: USERS_MESSAGES.USER_NOT_FOUND,
-							status: HTTP_STATUS.NOT_FOUND
-						})
+						if (followed_used === null) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.USER_NOT_FOUND,
+								status: HTTP_STATUS.NOT_FOUND
+							})
+						}
 					}
 				}
 			}
-		}
-	})
+		},
+		['body']
+	)
+)
+
+export const unfollowValidator = validate(
+	checkSchema(
+		{
+			user_id: {
+				custom: {
+					options: async (value, { req }) => {
+						if (!ObjectId.isValid(value)) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.USER_NOT_FOUND,
+								status: HTTP_STATUS.NOT_FOUND
+							})
+						}
+						const followed_used = await databaseService.users.findOne({
+							_id: new ObjectId(value)
+						})
+						if (followed_used === null) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.USER_NOT_FOUND,
+								status: HTTP_STATUS.NOT_FOUND
+							})
+						}
+					}
+				}
+			}
+		},
+		['params']
+	)
+)
+
+export const changePasswordValidator = validate(
+	checkSchema(
+		{
+			oldPassword: {
+				notEmpty: {
+					errorMessage: USERS_MESSAGES.OLD_PASSWORD_IS_REQUIRED
+				},
+				isString: {
+					errorMessage: USERS_MESSAGES.OLD_PASSWORD_MUST_BE_A_STRING
+				},
+				isLength: {
+					options: {
+						min: 8,
+						max: 50
+					},
+					errorMessage: USERS_MESSAGES.OLD_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
+				},
+				trim: true,
+				custom: {
+					options: async (value: string, { req }) => {
+						const { user_id } = (req as Request).decoded_authorization as TokenPayLoad
+						const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
+						if (!user) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.USER_NOT_FOUND,
+								status: HTTP_STATUS.NOT_FOUND
+							})
+						}
+						const { password } = user
+						const isMatch = hashPassword(value) === password
+						if (!isMatch) {
+							throw new ErrorWithStatus({
+								message: USERS_MESSAGES.OLD_PASSWORD_NOT_MATCH,
+								status: HTTP_STATUS.UNAUTHORIZED
+							})
+						}
+					}
+				}
+			},
+			password: {
+				notEmpty: {
+					errorMessage: USERS_MESSAGES.PASSWORD_IS_REQUIRED
+				},
+				isString: {
+					errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_A_STRING
+				},
+				isLength: {
+					options: {
+						min: 8,
+						max: 50
+					},
+					errorMessage: USERS_MESSAGES.PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
+				},
+				trim: true,
+				isStrongPassword: {
+					options: {
+						minLength: 8,
+						minLowercase: 1,
+						minSymbols: 1,
+						minUppercase: 1
+					},
+					errorMessage: USERS_MESSAGES.PASSWORD_MUST_BE_STRONG
+				}
+			},
+			confirmPassword: {
+				notEmpty: {
+					errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_IS_REQUIRED
+				},
+				isString: {
+					errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_A_STRING
+				},
+				isLength: {
+					options: {
+						min: 8,
+						max: 50
+					},
+					errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50
+				},
+				trim: true,
+				isStrongPassword: {
+					options: {
+						minLength: 8,
+						minLowercase: 1,
+						minSymbols: 1,
+						minUppercase: 1
+					},
+					errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_STRONG
+				},
+				custom: {
+					options: (value, { req }) => {
+						if (value !== req.body.password) {
+							throw new Error('Confirm password phai giong voi pass word')
+						}
+						return true
+					},
+					errorMessage: USERS_MESSAGES.CONFIRM_PASSWORD_MUST_BE_NOT_DIFFERENT_FROM_PASSWORD
+				}
+			}
+		},
+		['body']
+	)
 )

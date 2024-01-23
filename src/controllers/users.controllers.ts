@@ -3,6 +3,7 @@ import User from '~/models/schemas/User.schema'
 import { ParamsDictionary } from 'express-serve-static-core'
 import usersService from '~/services/users.services'
 import {
+	ChangePasswordReqBody,
 	FollowReqBody,
 	ForgotPasswordReqBody,
 	GetProfileReqParams,
@@ -11,6 +12,7 @@ import {
 	RefreshTokenReqBody,
 	ResetPasswordReqBody,
 	TokenPayLoad,
+	UnfollowReqParams,
 	UpdateMeReqBody,
 	VerifyEmailReqBody,
 	registerReqBody,
@@ -157,5 +159,22 @@ export const followController = async (req: Request<ParamsDictionary, any, Follo
 	const { user_id } = req.decoded_authorization as TokenPayLoad
 	const { followed_user_id } = req.body
 	const result = await usersService.follow(user_id, followed_user_id)
+	return res.json(result)
+}
+
+export const unfollowController = async (req: Request<UnfollowReqParams>, res: Response) => {
+	const { user_id } = req.decoded_authorization as TokenPayLoad
+	const { user_id: followed_user_id } = req.params
+	const result = await usersService.unfollow(user_id, followed_user_id as string)
+	return res.json(result)
+}
+
+export const changePasswordController = async (
+	req: Request<ParamsDictionary, any, ChangePasswordReqBody>,
+	res: Response
+) => {
+	const { user_id } = req.decoded_authorization as TokenPayLoad
+	const { password } = req.body
+	const result = await usersService.changePassword(user_id, password)
 	return res.json(result)
 }

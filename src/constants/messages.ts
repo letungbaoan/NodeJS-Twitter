@@ -58,5 +58,16 @@ export const USERS_MESSAGES = {
 	COVER_PHOTO_LENGTH_MUST_BE_FROM_1_TO_200: 'Cover photo length must be from 1 to 200',
 	GET_PROFILE_SUCCESS: 'Get profile success',
 	FOLLOW_SUCCESS: 'Follow success',
-	ALREADY_FOLLOWED: 'Already followed'
+	ALREADY_FOLLOWED: 'Already followed',
+	USERNAME_IS_REQUIRED: 'Username is required',
+	USERNAME_IS_INVALID: 'Username is invalid',
+	USERNAME_ALREADY_USED: 'Username already used',
+	USERNAME_LENGTH_MUST_BE_FROM_4_TO_15: 'Username length must be from 4 to 15 characters',
+	ALREADY_UNFOLLOWED: 'Already unfollowed',
+	UNFOLLOW_SUCCESS: 'Unfollow success',
+	OLD_PASSWORD_IS_REQUIRED: 'Old password is required',
+	OLD_PASSWORD_MUST_BE_A_STRING: 'Old password must be a string',
+	OLD_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Old password length must be from 8 to 50',
+	OLD_PASSWORD_NOT_MATCH: 'Old password not match',
+	CHANGE_PASSWORD_SUCCESS: 'Change password success'
 } as const
