@@ -9,7 +9,6 @@ const port = 4000
 databaseService.connect()
 initFolder()
 
-
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
