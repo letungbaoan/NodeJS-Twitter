@@ -3,11 +3,11 @@ import usersRouter from './routes/users.routes'
 import databaseService from './services/database.service'
 import { defaultErrorHandler } from './middlewares/error.middewares'
 import mediasRouter from './routes/medias.routes'
-import { initFolder } from './utils/file'
+import { initTempFolder } from './utils/file'
 const app = express()
 const port = 4000
 databaseService.connect()
-initFolder()
+initTempFolder()
 
 app.use(express.json())
 app.use('/users', usersRouter)
