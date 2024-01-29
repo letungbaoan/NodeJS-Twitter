@@ -1,10 +1,23 @@
 import { Request, Response, NextFunction } from 'express'
+import { UPLOAD_DIR } from '~/constants/dir'
+import { MEDIA_MESSAGE } from '~/constants/messages'
 import mediaService from '~/services/media.services'
-import { handleUploadSingleImage } from '~/utils/file'
+import { handleUploadImage } from '~/utils/file'
+import path from 'path'
 
-export const uploadSingleImageController = async (req: Request, res: Response, next: NextFunction) => {
-	const result = await mediaService.handleUploadSingleImage(req)
+export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
+	const url = await mediaService.handleUploadImage(req)
 	return res.json({
-		result: result
+		message: MEDIA_MESSAGE.UPLOAD_SUCCESSFULLY,
+		result: url
+	})
+}
+
+export const serveImageController = async (req: Request, res: Response, next: NextFunction) => {
+	const { name } = req.params
+	return res.sendFile(path.resolve(UPLOAD_DIR, name), (err) => {
+		if (err) {
+			return res.status(404).send('Image not found')
+		}
 	})
 }

@@ -1,4 +1,4 @@
 import path from 'path'
 
-export const TEMP_IMG_FOLDER_DIR = path.resolve('uploads/images/temp')
-export const IMG_FOLDER_DIR = path.resolve('uploads/images')
+export const TEMP_UPLOAD_DIR = path.resolve('uploads/temp')
+export const UPLOAD_DIR = path.resolve('uploads/')
