@@ -7,7 +7,7 @@ import { initTempFolder } from './utils/file'
 import { config } from 'dotenv'
 import argv from 'minimist'
 import path from 'path'
-import { UPLOAD_DIR } from './constants/dir'
+import { UPLOAD_IMG_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 const options = argv(process.argv.slice(2))
 config()
