@@ -28,7 +28,8 @@ import {
 	getProfileController,
 	followController,
 	unfollowController,
-	changePasswordController
+	changePasswordController,
+	oauthController
 } from '~/controllers/users.controllers'
 import { wrapResquestHandler } from '~/utils/handlers'
 import { filterMiddleware } from '~/middlewares/common.middlewares'
@@ -44,10 +45,17 @@ usersRouter.post('/register', registerValidator, wrapResquestHandler(registerCon
 
 /**
  * Path: /login
- * Method: GET
+ * Method: POST
  * Body: { email: string, password: string }
  */
 usersRouter.post('/login', loginValidator, wrapResquestHandler(loginController))
+
+/**
+ * Path: /oauth/google
+ * Method: GET
+ * Query: { Code: string}
+ */
+usersRouter.get('/oauth/google', wrapResquestHandler(oauthController))
 
 /**
  * Path: /logout

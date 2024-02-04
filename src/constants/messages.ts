@@ -69,7 +69,8 @@ export const USERS_MESSAGES = {
 	OLD_PASSWORD_MUST_BE_A_STRING: 'Old password must be a string',
 	OLD_PASSWORD_LENGTH_MUST_BE_FROM_8_TO_50: 'Old password length must be from 8 to 50',
 	OLD_PASSWORD_NOT_MATCH: 'Old password not match',
-	CHANGE_PASSWORD_SUCCESS: 'Change password success'
+	CHANGE_PASSWORD_SUCCESS: 'Change password success',
+	EMAIL_NOT_VERIFIED: 'Email not verified'
 } as const
 
 export const MEDIA_MESSAGE = {
