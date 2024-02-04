@@ -7,7 +7,7 @@ import { initTempFolder } from './utils/file'
 import { config } from 'dotenv'
 import argv from 'minimist'
 import path from 'path'
-import { UPLOAD_IMG_DIR } from './constants/dir'
+import { UPLOAD_IMG_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 const options = argv(process.argv.slice(2))
 config()
@@ -21,6 +21,7 @@ app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
+app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 app.use(defaultErrorHandler)
 app.listen(port, () => {

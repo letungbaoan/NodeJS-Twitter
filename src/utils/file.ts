@@ -3,7 +3,6 @@ import path, { resolve } from 'path'
 import formidable, { File } from 'formidable'
 import { Request } from 'express'
 import { TEMP_UPLOAD_IMG_DIR, TEMP_UPLOAD_VIDEO_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
-import { getegid } from 'process'
 
 export const initTempFolder = () => {
 	if (!fs.existsSync(TEMP_UPLOAD_IMG_DIR)) {
