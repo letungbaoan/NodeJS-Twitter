@@ -63,6 +63,19 @@ export const logoutController = async (req: Request<ParamsDictionary, any, Logou
 	return res.json(result)
 }
 
+export const refreshTokenController = async (
+	req: Request<ParamsDictionary, any, RefreshTokenReqBody>,
+	res: Response
+) => {
+	const { refresh_token } = req.body
+	const { user_id, verify } = req.decoded_refresh_token as TokenPayLoad
+	const result = await usersService.refreshToken({ user_id, verify, refresh_token })
+	return res.status(HTTP_STATUS.ACCEPTED).json({
+		message: USERS_MESSAGES.REFRESH_TOKEN_SUCCESS,
+		result: result
+	})
+}
+
 export const verifyEmailController = async (req: Request<ParamsDictionary, any, VerifyEmailReqBody>, res: Response) => {
 	const { user_id } = req.decoded_email_verify_token as TokenPayLoad
 	const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
