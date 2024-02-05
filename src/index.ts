@@ -16,6 +16,7 @@ const app = express()
 const port = process.env.PORT
 databaseService.connect().then(() => {
 	databaseService.indexUsers()
+	databaseService.indexFollowers()
 })
 initTempFolder()
 
