@@ -45,15 +45,15 @@ class DatabaseService {
 	// async indexRefreshTokens() {
 	// 	const exists = await this.refreshTokens.indexExists(['exp_1', 'token_1'])
 	// 	if (!exists) {
-	// 		this.users.createIndex({ token: 1 })
-	// 		this.users.createIndex({ exp: 1 }, { expireAfterSeconds: 0 })
+	// 		this.refreshTokens.createIndex({ token: 1 })
+	// 		this.refreshTokens.createIndex({ exp: 1 }, { expireAfterSeconds: 0 })
 	// 	}
 	// }
 
 	// async indexVideoStatus() {
 	// 	const exists = await this.videoStatus.indexExists(['name_1'])
 	// 	if (!exists) {
-	// 		this.users.createIndex({ name: 1 })
+	// 		this.videoStatus.createIndex({ name: 1 })
 	// 	}
 	// }
 
