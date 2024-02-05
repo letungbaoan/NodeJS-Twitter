@@ -14,7 +14,9 @@ config()
 
 const app = express()
 const port = process.env.PORT
-databaseService.connect()
+databaseService.connect().then(() => {
+	databaseService.indexUsers()
+})
 initTempFolder()
 
 app.use(express.json())
