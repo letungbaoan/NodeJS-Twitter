@@ -17,6 +17,7 @@ const port = process.env.PORT
 databaseService.connect().then(() => {
 	databaseService.indexUsers()
 	databaseService.indexFollowers()
+	databaseService.indexRefreshTokens()
 })
 initTempFolder()
 
