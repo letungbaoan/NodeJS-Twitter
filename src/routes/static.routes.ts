@@ -2,8 +2,8 @@ import { Router } from 'express'
 import {
 	serveImageController,
 	serveVideoStreamController,
-    serveM3u8Controller,
-    serveSegmentController,
+	serveM3u8Controller,
+	serveSegmentController
 } from '~/controllers/medias.controller'
 const staticRouter = Router()
 
