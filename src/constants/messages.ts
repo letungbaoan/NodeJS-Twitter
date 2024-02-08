@@ -75,5 +75,6 @@ export const USERS_MESSAGES = {
 } as const
 
 export const MEDIA_MESSAGE = {
-	UPLOAD_SUCCESSFULLY: 'Upload successfully'
+	UPLOAD_SUCCESSFULLY: 'Upload successfully',
+	GET_STATUS_SUCCESS: 'Get status success'
 }
