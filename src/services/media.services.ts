@@ -11,7 +11,7 @@ import { EncodingStatus, MediaType } from '~/constants/enums'
 import { Media } from '~/models/Other'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
 import databaseService from './database.service'
-import VideoStatus from '~/models/schemas/VideoStatus.schemas'
+import VideoStatus from '~/models/schemas/VideoStatus.schema'
 config()
 
 class Queue {
