@@ -1,3 +1,5 @@
+import exp from 'constants'
+
 export const USERS_MESSAGES = {
 	VALIDATION_ERROR: 'Validation error',
 	NAME_IS_REQUIRED: 'Name is required',
@@ -74,7 +76,13 @@ export const USERS_MESSAGES = {
 	REFRESH_TOKEN_SUCCESS: 'Refresh token success'
 } as const
 
-export const MEDIA_MESSAGE = {
+export const MEDIA_MESSAGES = {
 	UPLOAD_SUCCESSFULLY: 'Upload successfully',
 	GET_STATUS_SUCCESS: 'Get status success'
-}
+} as const
+
+export const TWEETS_MESSAGES = {
+	INVALID_TYPE: 'Invalid type of tweet',
+	INVALID_AUDIENCE: 'Invalid audience',
+	PARENT_ID_MUST_BE_A_VALID_TWEET_ID: 'Parent id must be a valid tweet id'
+} as const

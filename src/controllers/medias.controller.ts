@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { UPLOAD_IMG_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
-import { MEDIA_MESSAGE } from '~/constants/messages'
+import { MEDIA_MESSAGES } from '~/constants/messages'
 import mediaService from '~/services/media.services'
 import { handleUploadImage } from '~/utils/file'
 import path from 'path'
@@ -10,7 +10,7 @@ import fs from 'fs'
 export const uploadImageController = async (req: Request, res: Response, next: NextFunction) => {
 	const url = await mediaService.uploadImage(req)
 	return res.json({
-		message: MEDIA_MESSAGE.UPLOAD_SUCCESSFULLY,
+		message: MEDIA_MESSAGES.UPLOAD_SUCCESSFULLY,
 		result: url
 	})
 }
@@ -27,7 +27,7 @@ export const serveImageController = (req: Request, res: Response, next: NextFunc
 export const uploadVideoController = async (req: Request, res: Response, next: NextFunction) => {
 	const url = await mediaService.uploadVideo(req)
 	return res.json({
-		message: MEDIA_MESSAGE.UPLOAD_SUCCESSFULLY,
+		message: MEDIA_MESSAGES.UPLOAD_SUCCESSFULLY,
 		result: url
 	})
 }
@@ -35,7 +35,7 @@ export const uploadVideoController = async (req: Request, res: Response, next: N
 export const uploadVideoHLSController = async (req: Request, res: Response, next: NextFunction) => {
 	const url = await mediaService.uploadVideoHLS(req)
 	return res.json({
-		message: MEDIA_MESSAGE.UPLOAD_SUCCESSFULLY,
+		message: MEDIA_MESSAGES.UPLOAD_SUCCESSFULLY,
 		result: url
 	})
 }
@@ -44,7 +44,7 @@ export const videoStatusController = async (req: Request, res: Response, next: N
 	const { id } = req.params
 	const status = await mediaService.getVideoStatus(id as string)
 	return res.json({
-		message: MEDIA_MESSAGE.GET_STATUS_SUCCESS,
+		message: MEDIA_MESSAGES.GET_STATUS_SUCCESS,
 		result: status
 	})
 }

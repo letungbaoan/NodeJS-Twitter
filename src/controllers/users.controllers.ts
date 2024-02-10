@@ -20,8 +20,6 @@ import {
 } from '~/models/request/User.requests'
 import { ObjectId } from 'mongodb'
 import { USERS_MESSAGES } from '~/constants/messages'
-import exp from 'constants'
-import { TokenExpiredError } from 'jsonwebtoken'
 import databaseService from '~/services/database.service'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
