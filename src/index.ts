@@ -10,6 +10,7 @@ import { UPLOAD_IMG_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
+import bookmarkRouter from './routes/bookmarks.routes'
 const options = argv(process.argv.slice(2))
 config()
 
@@ -29,6 +30,7 @@ app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/tweets', tweetsRouter)
+app.use('/bookmarks', bookmarkRouter)
 
 app.use(defaultErrorHandler)
 app.listen(port, () => {
