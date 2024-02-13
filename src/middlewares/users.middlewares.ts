@@ -1,22 +1,18 @@
-import { error } from 'console'
 import { ErrorWithStatus } from 'src/models/Errors'
 import { Request, Response, NextFunction } from 'express'
-import { body, checkSchema } from 'express-validator'
+import { checkSchema } from 'express-validator'
 import usersService from '~/services/users.services'
 import { validate } from '~/utils/validation'
 import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.service'
 import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
-import { decode } from 'punycode'
 import HTTP_STATUS from '~/constants/httpStatus'
-import exp from 'constants'
 import { JsonWebTokenError } from 'jsonwebtoken'
 import { capitalize } from 'lodash'
 import { TokenPayLoad } from '~/models/request/User.requests'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
-import { Http2ServerRequest } from 'http2'
 import { REGEX_USERNAME } from '~/constants/regex'
 
 export const loginValidator = validate(
@@ -820,3 +816,12 @@ export const changePasswordValidator = validate(
 		['body']
 	)
 )
+
+export const isUserLoggedInValidator = (middleware: (req: Request, res: Response, next: NextFunction) => void) => {
+	return (req: Request, res: Response, next: NextFunction) => {
+		if (req.headers.authorization) {
+			return middleware(req, res, next)
+		}
+		next()
+	}
+}
