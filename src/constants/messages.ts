@@ -102,3 +102,7 @@ export const BOOKMARKS_MESSAGES = {
 	CREATE_BOOKMARK_SUCCESSFULLY: 'Create bookmark successfully',
 	DELETE_BOOKMARK_SUCCESSFULLY: 'Delete bookmark successfully'
 } as const
+
+export const LIKES_MESSAGES = {
+	LIKE_TWEET_SUCCESSFULLY: 'Like tweet successfully'
+}
