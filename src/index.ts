@@ -12,6 +12,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
+//import '~/utils/fake'
 const options = argv(process.argv.slice(2))
 config()
 
