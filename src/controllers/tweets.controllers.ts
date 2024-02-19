@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { TweetType } from '~/constants/enums'
 import { TWEETS_MESSAGES } from '~/constants/messages'
-import { TweetReqBody } from '~/models/request/Tweet.request'
+import { TweetParam, TweetQuery, TweetReqBody } from '~/models/request/Tweet.request'
 import { TokenPayLoad } from '~/models/request/User.requests'
 import tweetsService from '~/services/tweets.services'
 
@@ -29,7 +29,7 @@ export const getTweetController = async (req: Request, res: Response) => {
 	})
 }
 
-export const getTweetChildrenController = async (req: Request, res: Response) => {
+export const getTweetChildrenController = async (req: Request<TweetParam, any, any, TweetQuery>, res: Response) => {
 	const tweet_type = Number(req.query.tweet_type) as TweetType
 	const limit = Number(req.query.limit)
 	const page = Number(req.query.page)
