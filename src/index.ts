@@ -12,6 +12,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
+import searchRouter from './routes/search.routes'
 //import '~/utils/fake'
 const options = argv(process.argv.slice(2))
 config()
@@ -34,6 +35,7 @@ app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarkRouter)
 app.use('/likes', likeRouter)
+app.use('/search', searchRouter)
 
 app.use(defaultErrorHandler)
 app.listen(port, () => {
