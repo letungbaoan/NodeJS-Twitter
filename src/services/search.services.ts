@@ -1,20 +1,42 @@
 import { SearchQuery } from '~/models/request/search.requests'
 import databaseService from './database.service'
-import { TweetType } from '~/constants/enums'
+import { MediaType, MediaTypeQuery, TweetType } from '~/constants/enums'
 import { ObjectId } from 'mongodb'
 
 class SearchService {
-	async search({ limit, page, content, user_id }: { limit: number; page: number; content: string; user_id: string }) {
+	async search({
+		limit,
+		page,
+		content,
+		user_id,
+		media_type
+	}: {
+		limit: number
+		page: number
+		content: string
+		user_id: string
+		media_type: MediaTypeQuery
+	}) {
+		const $match: any = {
+			$text: {
+				$search: content
+			}
+		}
+		if (media_type) {
+			if (media_type === MediaTypeQuery.Image) {
+				$match['medias.type'] = MediaType.Image
+			} else if (media_type === MediaTypeQuery.Video) {
+				$match['medias.type'] = {
+					$in: [MediaType.Video, MediaType.HLS]
+				}
+			}
+		}
 		const date = new Date()
 		const [tweets, total] = await Promise.all([
 			databaseService.tweets
 				.aggregate([
 					{
-						$match: {
-							$text: {
-								$search: content
-							}
-						}
+						$match: $match
 					},
 					{
 						$lookup: {
@@ -172,11 +194,7 @@ class SearchService {
 			databaseService.tweets
 				.aggregate([
 					{
-						$match: {
-							$text: {
-								$search: content
-							}
-						}
+						$match
 					},
 					{
 						$lookup: {
