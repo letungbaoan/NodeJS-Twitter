@@ -14,6 +14,7 @@ import HTTP_STATUS from '~/constants/httpStatus'
 import Follower from '~/models/schemas/Follower.schema'
 import axios from 'axios'
 import { stringify } from 'querystring'
+import { sendVerifyEmail } from '~/utils/email'
 config()
 class UsersService {
 	private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -117,6 +118,14 @@ class UsersService {
 		const { iat, exp } = await this.decodeRefreshToken(refresh_token)
 		await databaseService.refreshTokens.insertOne(
 			new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token, iat: iat, exp: exp })
+		)
+		await sendVerifyEmail(
+			payload.email,
+			'Verify your email',
+			`
+            <h1>Verify your email<h1>
+            <p>Click <a href="${process.env.CLIENT_URL}/verify-email?token=${email_verify_token}">here</a> to verify your email</p>
+        `
 		)
 		return {
 			access_token,
