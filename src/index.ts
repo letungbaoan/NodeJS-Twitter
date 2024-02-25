@@ -13,6 +13,7 @@ import tweetsRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
 import searchRouter from './routes/search.routes'
+import '~/utils/s3'
 //import '~/utils/fake'
 const options = argv(process.argv.slice(2))
 config()
