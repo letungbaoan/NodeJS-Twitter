@@ -1,8 +1,10 @@
 import { S3, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import { config } from 'dotenv'
+import { Response } from 'express'
 import fs from 'fs'
 import path from 'path'
+import HTTP_STATUS from '~/constants/httpStatus'
 config()
 
 const s3 = new S3({
@@ -12,20 +14,42 @@ const s3 = new S3({
 		accessKeyId: process.env.AWS_ACCESS_KEY_ID as string
 	}
 })
-const file = fs.readFileSync(path.resolve('uploads/images/46791887181cdd645f4d1fd00.jpg'))
-const parallelUploads3 = new Upload({
-	client: s3,
-	params: { Bucket: 'twitter-clone-ap-southeast-1-ltba', Key: 'anh1.jpg', Body: file, ContentType: 'image/jpeg' },
-	tags: [
-		/*...*/
-	], // optional tags
-	queueSize: 4, // optional concurrency configuration
-	partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
-	leavePartsOnError: false // optional manually handle dropped parts
-})
 
-parallelUploads3.on('httpUploadProgress', (progress) => {
-	console.log(progress)
-})
+export const uploadFileToS3 = ({
+	filename,
+	filepath,
+	contentType
+}: {
+	filename: string
+	filepath: string
+	contentType: string
+}) => {
+	const parallelUploads3 = new Upload({
+		client: s3,
+		params: {
+			Bucket: process.env.S3_BUCKET_NAME as string,
+			Key: filename,
+			Body: fs.readFileSync(filepath),
+			ContentType: contentType
+		},
+		tags: [
+			/*...*/
+		], // optional tags
+		queueSize: 4, // optional concurrency configuration
+		partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
+		leavePartsOnError: false // optional manually handle dropped parts
+	})
+	return parallelUploads3.done()
+}
 
-parallelUploads3.done().then((res) => console.log(res))
+export const sendFileFromS3 = async (res: Response, filepath: string) => {
+	try {
+		const data = await s3.getObject({
+			Bucket: process.env.S3_BUCKET_NAME as string,
+			Key: filepath
+		})
+		;(data.Body as any).pipe(res)
+	} catch (error) {
+		res.status(HTTP_STATUS.NOT_FOUND).send('Not found')
+	}
+}
