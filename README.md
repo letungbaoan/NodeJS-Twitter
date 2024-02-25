@@ -1,6 +1,6 @@
 # Twitter Clone
 
-This project is a Twitter clone developed using TypeScript and built on top of Node.js and Express.js framework. It utilizes MongoDB as the database for storing data. The authentication mechanism is implemented using JWT Tokens for access and refresh token management, along with Google OAuth2.0 for user authentication. Additionally, the project employs Sharp library for downsizing images and HLS Encode to handle video content.
+This project is a Twitter clone developed in TypeScript, utilizing Node.js and Express.js framework. MongoDB is used as the database for data storage. Authentication is implemented using JWT Tokens for access and refresh token management, along with Google OAuth2.0 for user authentication. Media serving capabilities include downsizing images using the Sharp library and handling video content with HLS Encode. Additionally, AWS SES (Simple Email Service) is used for sending emails, and AWS S3 (Simple Storage Service) is employed to store uploaded images and videos.
 
 ## Features
 
@@ -10,8 +10,9 @@ This project is a Twitter clone developed using TypeScript and built on top of N
 - Bookmark, like, comment, quote and retweet tweets
 - Get new feeds
 - Media upload support with image downsizing and video encoding
-- User profile management
 - Advance search
+- Email notifications using AWS SES
+- Storage of media files on AWS S3
 
 ## Usage
 
@@ -20,3 +21,4 @@ This project is a Twitter clone developed using TypeScript and built on top of N
 - Follow other users to see their tweets on your new feed.
 - Like, comment, quote and retweet posts.
 - Manage your profile settings.
+- Receive email notifications for certain events.
