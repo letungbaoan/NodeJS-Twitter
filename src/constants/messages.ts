@@ -112,3 +112,7 @@ export const LIKES_MESSAGES = {
 export const SEARCH_MESSAGES = {
 	SEARCH_SUCCESSFULLY: 'Search successfully'
 } as const
+
+export const CONVERSATIONS_MESSAGES = {
+	GET_CONVERSATIONS_SUCCESSFULLY: 'Get conversations successfully'
+} as const
