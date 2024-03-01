@@ -2,8 +2,9 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { Request, Response } from 'express'
 import conversationService from '~/services/conversations.services'
 import { CONVERSATIONS_MESSAGES } from '~/constants/messages'
+import { GetConversationsParams } from '~/models/request/conversations.requests'
 
-export const getConversationsController = async (req: Request, res: Response) => {
+export const getConversationsController = async (req: Request<GetConversationsParams>, res: Response) => {
 	const { receiver_id } = req.params
 	const limit = Number(req.query.limit)
 	const page = Number(req.query.page)
