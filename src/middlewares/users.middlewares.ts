@@ -14,6 +14,7 @@ import { TokenPayLoad } from '~/models/request/User.requests'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import { REGEX_USERNAME } from '~/constants/regex'
+import { verifyAccessToken } from '~/utils/common'
 
 export const loginValidator = validate(
 	checkSchema(
@@ -202,25 +203,7 @@ export const accessTokenValidator = validate(
 				custom: {
 					options: async (value: string, { req }) => {
 						const access_token = (value || '').split(' ')[1]
-						if (!access_token) {
-							throw new ErrorWithStatus({
-								message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,
-								status: HTTP_STATUS.UNAUTHORIZED
-							})
-						}
-						try {
-							const decoded_authorization = await verifyToken({
-								token: access_token,
-								secretOnPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
-							})
-							;(req as Request).decoded_authorization = decoded_authorization
-						} catch (error) {
-							throw new ErrorWithStatus({
-								message: capitalize((error as JsonWebTokenError).message),
-								status: HTTP_STATUS.UNAUTHORIZED
-							})
-						}
-						return true
+						return await verifyAccessToken(access_token, req as Request)
 					}
 				}
 			}
