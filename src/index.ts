@@ -25,7 +25,14 @@ import { UserVerifyStatus } from './constants/enums'
 import { ErrorWithStatus } from './models/Errors'
 import { USERS_MESSAGES } from './constants/messages'
 import HTTP_STATUS from './constants/httpStatus'
-const options = argv(process.argv.slice(2))
+import YAML from 'yaml'
+import fs from 'fs'
+import swaggerUi from 'swagger-ui-express'
+import path from 'path'
+const file = fs.readFileSync(path.resolve('twitter-swagger.yaml'), 'utf-8')
+
+const swaggerDocument = YAML.parse(file)
+
 config()
 
 const app = express()
@@ -40,9 +47,9 @@ databaseService.connect().then(() => {
 	databaseService.indexVideoStatus()
 })
 initTempFolder()
-
 app.use(express.json())
 app.use('/users', usersRouter)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
