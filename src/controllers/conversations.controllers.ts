@@ -1,4 +1,3 @@
-import { ParamsDictionary } from 'express-serve-static-core'
 import { Request, Response } from 'express'
 import conversationService from '~/services/conversations.services'
 import { CONVERSATIONS_MESSAGES } from '~/constants/messages'

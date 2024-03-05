@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import {  Request, Response } from 'express'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { TweetType } from '~/constants/enums'
 import { TWEETS_MESSAGES } from '~/constants/messages'
