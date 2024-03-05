@@ -23,8 +23,7 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import databaseService from '~/services/database.service'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
-import { config } from 'dotenv'
-config()
+import { envConfig } from '~/constants/config'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginReqBody>, res: Response) => {
 	const user = req.user as User
@@ -39,7 +38,7 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
 export const oauthController = async (req: Request, res: Response) => {
 	const { code } = req.query
 	const result = await usersService.oauth(code as string)
-	const urlRedirect = `${process.env.CLIENT_REDIRECT_URI}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.new_user}`
+	const urlRedirect = `${envConfig.clientRedirectUri}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.new_user}`
 	return res.redirect(urlRedirect)
 }
 
@@ -121,7 +120,7 @@ export const forgotPasswordController = async (
 	const result = await usersService.forgotPassword({
 		user_id: (_id as ObjectId).toString(),
 		verify: verify,
-        email
+		email
 	})
 	return res.json(result)
 }

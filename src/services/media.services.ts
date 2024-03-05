@@ -5,8 +5,7 @@ import { UPLOAD_IMG_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import path from 'path'
 import { rimrafSync } from 'rimraf'
 import fsPromise from 'fs/promises'
-import { isProduction } from '~/constants/config'
-import { config } from 'dotenv'
+import { envConfig, isProduction } from '~/constants/config'
 import { EncodingStatus, MediaType } from '~/constants/enums'
 import { Media } from '~/models/Other'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
@@ -14,8 +13,6 @@ import databaseService from './database.service'
 import VideoStatus from '~/models/schemas/VideoStatus.schema'
 import { uploadFileToS3 } from '~/utils/s3'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3'
-import fs from 'fs'
-config()
 
 class Queue {
 	items: string[]
@@ -138,12 +135,6 @@ class MediaService {
 					url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
 					type: MediaType.Image
 				}
-				// return {
-				// 	url: isProduction
-				// 		? `${process.env.HOST}/static/image/newFullFileName`
-				// 		: `http://localhost:${process.env.PORT}/static/image/newFullFileName`,
-				// 	type: MediaType.Image
-				// }
 			})
 		)
 		return result
@@ -163,12 +154,6 @@ class MediaService {
 					url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
 					type: MediaType.Video
 				}
-				// return {
-				// 	url: isProduction
-				// 		? `${process.env.HOST}/static/video/${file.newFilename}`
-				// 		: `http://localhost:${process.env.PORT}/static/video/${file.newFilename}`,
-				// 	type: MediaType.Video
-				// }
 			})
 		)
 
@@ -184,8 +169,8 @@ class MediaService {
 				queue.enqueue(file.filepath)
 				return {
 					url: isProduction
-						? `${process.env.HOST}/static/video-hls/${newName}/master.m3u8`
-						: `http://localhost:${process.env.PORT}/static/video-hls/${newName}/master.m3u8`,
+						? `${envConfig.host}/static/video-hls/${newName}/master.m3u8`
+						: `http://localhost:${envConfig.port}/static/video-hls/${newName}/master.m3u8`,
 					type: MediaType.HLS
 				}
 			})

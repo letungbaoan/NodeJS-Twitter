@@ -15,6 +15,7 @@ import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import { REGEX_USERNAME } from '~/constants/regex'
 import { verifyAccessToken } from '~/utils/common'
+import { envConfig } from '~/constants/config'
 
 export const loginValidator = validate(
 	checkSchema(
@@ -229,7 +230,7 @@ export const refreshTokenValidator = validate(
 							const [decoded_refresh_token, refresh_token] = await Promise.all([
 								verifyToken({
 									token: value,
-									secretOnPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+									secretOnPublicKey: envConfig.jwtSecretRefreshToken
 								}),
 								databaseService.refreshTokens.findOne({ token: value })
 							])
@@ -274,7 +275,7 @@ export const emailVerifyTokenValidator = validate(
 						try {
 							const decoded_email_verify_token = await verifyToken({
 								token: value,
-								secretOnPublicKey: process.env.JWT_SECRET_EMAIL_VERIFY_TOKEN as string
+								secretOnPublicKey: envConfig.jwtSecretEmailVerifyToken
 							})
 
 							;(req as Request).decoded_email_verify_token = decoded_email_verify_token
@@ -350,7 +351,7 @@ export const verifyForgotPasswordTokenValidator = validate(
 						try {
 							const decoded_forgot_password_token = await verifyToken({
 								token: value,
-								secretOnPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+								secretOnPublicKey: envConfig.jwtSecretForgotPasswordToken
 							})
 							const { user_id } = decoded_forgot_password_token
 							const user = await databaseService.users.findOne({
@@ -404,7 +405,7 @@ export const resetPasswordValidator = validate(
 						try {
 							const decoded_forgot_password_token = await verifyToken({
 								token: value,
-								secretOnPublicKey: process.env.JWT_SECRET_FORGOT_PASSWORD_TOKEN as string
+								secretOnPublicKey: envConfig.jwtSecretForgotPasswordToken
 							})
 							const { user_id } = decoded_forgot_password_token
 							const user = await databaseService.users.findOne({

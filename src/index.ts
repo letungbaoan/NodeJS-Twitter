@@ -4,9 +4,7 @@ import databaseService from './services/database.service'
 import { defaultErrorHandler } from './middlewares/error.middewares'
 import mediasRouter from './routes/medias.routes'
 import { initTempFolder } from './utils/file'
-import { config } from 'dotenv'
-import argv from 'minimist'
-import { UPLOAD_IMG_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
+import { UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
 import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
@@ -29,16 +27,15 @@ import YAML from 'yaml'
 import fs from 'fs'
 import swaggerUi from 'swagger-ui-express'
 import path from 'path'
+import { envConfig } from './constants/config'
 const file = fs.readFileSync(path.resolve('twitter-swagger.yaml'), 'utf-8')
 
 const swaggerDocument = YAML.parse(file)
 
-config()
-
 const app = express()
 const httpServer = createServer(app)
 app.use(cors())
-const port = process.env.PORT
+const port = envConfig.port
 databaseService.connect().then(() => {
 	databaseService.indexUsers()
 	databaseService.indexFollowers()
