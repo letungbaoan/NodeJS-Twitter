@@ -6,7 +6,7 @@ import mediasRouter from './routes/medias.routes'
 import { initTempFolder } from './utils/file'
 import { UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarkRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
@@ -18,15 +18,20 @@ import YAML from 'yaml'
 import fs from 'fs'
 import swaggerUi from 'swagger-ui-express'
 import path from 'path'
-import { envConfig } from './constants/config'
+import { envConfig, isProduction } from './constants/config'
 import initSocket from './utils/socket'
+import helmet from 'helmet'
 const file = fs.readFileSync(path.resolve('twitter-swagger.yaml'), 'utf-8')
 
 const swaggerDocument = YAML.parse(file)
 
 const app = express()
 const httpServer = createServer(app)
-app.use(cors())
+app.use(helmet())
+const corsOptions: CorsOptions = {
+	origin: isProduction ? envConfig.clientUrl : '*'
+}
+app.use(cors(corsOptions))
 const port = envConfig.port
 databaseService.connect().then(() => {
 	databaseService.indexUsers()
