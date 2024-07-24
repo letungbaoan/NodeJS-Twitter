@@ -341,7 +341,6 @@ export const verifyForgotPasswordTokenValidator = validate(
 				trim: true,
 				custom: {
 					options: async (value, { req }) => {
-						console.log(req.body)
 						if (!value) {
 							throw new ErrorWithStatus({
 								message: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,
@@ -395,7 +394,6 @@ export const resetPasswordValidator = validate(
 				trim: true,
 				custom: {
 					options: async (value, { req }) => {
-						console.log(req.body)
 						if (!value) {
 							throw new ErrorWithStatus({
 								message: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED,

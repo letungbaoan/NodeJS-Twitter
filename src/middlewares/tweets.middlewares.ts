@@ -273,7 +273,6 @@ export const audienceValidator = wrapResquestHandler(async (req: Request, res: R
 		}
 		const { user_id } = req.decoded_authorization as TokenPayLoad
 		const isInTwitterCirlce = author.twitter_circle.some((user_circile_id) => user_circile_id.equals(user_id))
-		console.log()
 		if (!isInTwitterCirlce && !author._id.equals(user_id)) {
 			throw new ErrorWithStatus({
 				status: HTTP_STATUS.FORBIDDEN,

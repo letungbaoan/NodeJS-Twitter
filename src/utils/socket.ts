@@ -51,7 +51,6 @@ const initSocket = (httpServer: ServerHttp) => {
 		users[user_id] = {
 			socket_id: socket.id
 		}
-		console.log(users)
 
 		socket.use(async (packet, next) => {
 			const { access_token } = socket.handshake.auth
